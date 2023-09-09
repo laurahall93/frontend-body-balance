@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 
@@ -23,28 +23,27 @@ async function sendMessage(message) {
   return reply;
 }
 
-export default function ChatAI(): JSX.Element {
+export default function ChatAI() {
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
 
-  const chat = async (e: React.FormEvent<HTMLFormElement>, message: string) => {
+  const chat = async (e, message) => {
     e.preventDefault();
 
     if (!message) return;
     setIsTyping(true);
     window.scrollTo(0, 1e10);
 
-    let msgs = chats;
-    msgs.push({ role: "user", content: message });
-    setChats(msgs);
+    chats.push({ role: "user", content: message });
+    setChats(chats);
 
     setMessage("");
 
     sendMessage(message)
       .then((response) => {
-        msgs.push({ role: "AI trainer", content: response });
-        setChats(msgs);
+        chats.push({ role: "AI trainer", content: response });
+        setChats(chats);
         setIsTyping(false);
         window.scrollTo(0, 1e10);
       })
