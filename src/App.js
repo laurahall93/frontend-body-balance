@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import ChatAI from "./chat";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDtDztkLUrzoYYBt4-xwmpVxfWcvKrNwhg",
@@ -27,30 +28,7 @@ const uiConfig = {
   },
 };
 
-async function sendMessage(message) {
-  const endpoint = "https://bodyandbalance.onrender.com/chat"; // Replace with the appropriate endpoint
-
-  const data = {
-    message: message,
-  };
-
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  const json = await response.json();
-  const reply = json.content;
-  return reply;
-}
-
 function App() {
-  const [message, setMessage] = useState("");
-  const [chats, setChats] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false); // Local signed-in state.
 
   const chat = async (e, message) => {
@@ -101,44 +79,9 @@ function App() {
   }
 
   return (
-    <main>
-      <h1>Chat with Your trainer </h1>
-      <button onClick={() => firebase.auth().signOut()}>Sign-out</button>
-
-      <section>
-        {chats && chats.length
-          ? chats.map((chat, index) => (
-              <p key={index} className={chat.role === "user" ? "user_msg" : ""}>
-                <span>
-                  <b>
-                    {chat.role === "user"
-                      ? firebase.auth().currentUser.displayName
-                      : chat.role.toUpperCase()}
-                  </b>
-                </span>
-                <span>:</span>
-                <span>{chat.content}</span>
-              </p>
-            ))
-          : ""}
-      </section>
-
-      <div className={isTyping ? "" : "hide"}>
-        <p>
-          <i>{isTyping ? "Typing" : ""}</i>
-        </p>
-      </div>
-
-      <form action="" onSubmit={(e) => chat(e, message)}>
-        <input
-          type="text"
-          name="message"
-          value={message}
-          placeholder="Type a message here and hit Enter..."
-          onChange={(e) => setMessage(e.target.value)}
-        />
-      </form>
-    </main>
+    <>
+      <ChatAI />
+    </>
   );
 }
 
